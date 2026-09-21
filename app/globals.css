@@ -6,12 +6,12 @@
 :root { --background: #15100d; --foreground: #fff9ea; --radius: 1rem; }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: #15100d; color: var(--foreground); font-family: Georgia, 'Times New Roman', serif; }
+html { scroll-behavior: smooth; overscroll-behavior-y: none; }
+body { margin: 0; background: #15100d; color: var(--foreground); font-family: Georgia, 'Times New Roman', serif; overscroll-behavior-y: none; }
 button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
 /* ============ Base de la página ============ */
-.romance-page { overflow-x: hidden; background: #15100d; --flower-scale: 1; }
+.romance-page { overflow-x: hidden; background: #15100d; --flower-scale: 1.1; }
 
 /* ============ Portada (hero) ============ */
 .hero {
@@ -228,8 +228,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   height: 42%;
   z-index: 1;
   pointer-events: none;
-  opacity: 0;
-  background: #2e4626;
+  opacity: 1;
+  background: linear-gradient(180deg, #58743a 0%, #446430 55%, #365729 100%);
   clip-path: polygon(0 46%, 8% 34%, 18% 44%, 29% 24%, 41% 42%, 53% 28%, 65% 45%, 78% 22%, 89% 40%, 100% 28%, 100% 100%, 0 100%);
   animation: hillIn 1.6s .2s ease both;
 }
@@ -237,7 +237,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   content: '';
   position: absolute;
   inset: 32% 0 -8%;
-  background: #23361e;
+  background: #2f4f22;
   clip-path: polygon(0 58%, 10% 44%, 22% 60%, 33% 40%, 46% 58%, 59% 42%, 71% 56%, 84% 46%, 100% 55%, 100% 100%, 0 100%);
   opacity: .92;
 }
@@ -391,7 +391,20 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   inset: -20%;
   z-index: -2;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 212, 92, .32), transparent 66%);
+  background: radial-gradient(circle, rgba(255, 212, 92, .16), transparent 66%);
+  pointer-events: none;
+}
+.sunflower .ground {
+  position: absolute;
+  left: 50%;
+  top: 205%;
+  width: 150%;
+  height: 34%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(13, 33, 16, .45), transparent 70%);
+  filter: blur(3px);
+  z-index: -1;
   pointer-events: none;
 }
 
@@ -558,36 +571,14 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 .message-bubble svg { color: #e2934f; flex: none; }
 
 /* Mariposas */
-.butterfly { position: absolute; z-index: 3; width: 26px; height: 20px; pointer-events: none; will-change: transform; }
+.butterfly { position: absolute; z-index: 3; width: 54px; height: 42px; pointer-events: none; will-change: transform; }
+.butterfly img { width: 100%; height: 100%; object-fit: contain; display: block; filter: drop-shadow(0 4px 6px rgba(20, 10, 5, .35)); }
 
 /* Mariposa que sigue al dedo/cursor */
 .follow-holder { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
 .follow-holder .butterfly { left: 0; top: 0; opacity: 0; transition: opacity .3s; }
 .follow-holder.visible .follow-butterfly { opacity: 1; }
-.follow-butterfly .wing { background: linear-gradient(135deg, #ffd58c, #ea8f3f); }
-.follow-butterfly .body { background: linear-gradient(180deg, #8a5a22, #4c2b0c); }
-.butterfly .body {
-  position: absolute;
-  left: 50%;
-  top: 4px;
-  width: 4px;
-  height: 12px;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, #7a4a18, #4c2b0c);
-  border-radius: 50% 50% 40% 40%;
-}
-.butterfly .wing {
-  position: absolute;
-  top: 2px;
-  width: 12px;
-  height: 10px;
-  border-radius: 60% 20% 60% 40%;
-  background: linear-gradient(135deg, #ffce74, #eda23f);
-  box-shadow: inset 0 0 0 1px rgba(120, 60, 10, .35);
-  animation: bfFlap .34s ease-in-out infinite alternate;
-}
-.butterfly .wing-l { left: 2px; transform-origin: 100% 50%; }
-.butterfly .wing-r { right: 2px; transform-origin: 0 50%; transform: scaleX(-1); }
+.follow-butterfly { width: 46px; height: 36px; margin-left: -23px; margin-top: -18px; }
 .butterfly-a { animation: bfA 26s ease-in-out infinite; }
 .butterfly-b { animation: bfB 31s ease-in-out -12s infinite; opacity: .85; }
 
@@ -613,8 +604,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   left: 50%;
   transform: translateX(-50%);
   z-index: 6;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid rgba(255, 238, 186, .22);
   background: rgba(37, 52, 26, .18);
@@ -637,8 +628,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   border: 1px solid rgba(255, 238, 186, .35);
   background: rgba(37, 52, 26, .35);
   color: #fff1bd;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -684,6 +675,75 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 .heart-divider svg { animation: heartBeat 1.8s ease-in-out infinite; }
 .ending-date { font: 600 12px Arial, sans-serif; letter-spacing: .3em; color: #e9c98f; margin: 20px 0 6px; }
 .ending-credit { color: rgba(255, 240, 205, .55); font: 11px Arial, sans-serif; letter-spacing: .18em; text-transform: uppercase; margin: 0; }
+
+.letter-card {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 52px 48px 44px;
+  border-radius: 20px;
+  text-align: center;
+  color: #6b4a24;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #fffaf0 0%, #fbf3e0 100%);
+  box-shadow:
+    0 34px 80px rgba(3, 7, 3, .55),
+    0 0 0 1px rgba(206, 164, 92, .4),
+    inset 0 0 70px rgba(224, 190, 128, .28);
+}
+.letter-card .end-spark { color: #d98a2b; margin: 0 auto 20px; display: block; animation: endSparkPulse 3s ease-in-out infinite; }
+.letter-card .ending-eyebrow { color: #b2711f; }
+.letter-card .ending-title { color: #54340f; }
+.letter-card .ending-title em { color: #d17e1e; }
+.letter-card .ending-text { color: #5d3f1c; }
+.letter-card .heart-divider:before, .letter-card .heart-divider:after { background: linear-gradient(90deg, transparent, rgba(209, 126, 30, .55)); }
+.letter-card .heart-divider:after { background: linear-gradient(90deg, rgba(209, 126, 30, .55), transparent); }
+.letter-card .ending-credit { color: rgba(109, 78, 36, .6); }
+.type-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  vertical-align: -.15em;
+  margin-left: 3px;
+  background: #d17e1e;
+  animation: caretBlink .8s steps(2, start) infinite;
+}
+.ending-section.unlocked .letter-card { animation: letterIn 1s cubic-bezier(.22, .9, .26, 1) both; }
+@keyframes letterIn {
+  from { opacity: 0; transform: translateY(34px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes caretBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+.ending-inner { transition: filter .9s ease, opacity .9s ease; }
+.ending-section.locked .ending-inner {
+  filter: blur(16px) saturate(.6);
+  opacity: .5;
+  pointer-events: none;
+  user-select: none;
+}
+.ending-lock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: rgba(23, 33, 29, .72);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 238, 186, .3);
+  color: #ffe9a8;
+  font: italic 15px Georgia, serif;
+  max-width: min(420px, 86vw);
+  text-align: left;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .4);
+}
+.ending-lock svg { color: #ffd23e; flex: none; animation: heartBeat 1.8s ease-in-out infinite; }
 
 /* ============ Sobreposición sorpresa (flor especial) ============ */
 .special-overlay {
@@ -881,13 +941,14 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 /* ============ Controles del campo ============ */
 .garden-counter {
   position: fixed;
-  left: max(18px, env(safe-area-inset-left));
-  bottom: max(108px, calc(env(safe-area-inset-bottom) + 108px));
-  z-index: 40;
+  left: 50%;
+  top: max(16px, calc(env(safe-area-inset-top) + 16px));
+  transform: translateX(-50%);
+  z-index: 41;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 14px;
+  padding: 8px 14px;
   border-radius: 999px;
   background: rgba(37, 52, 26, .35);
   backdrop-filter: blur(6px);
@@ -903,14 +964,14 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 .all-found-note {
   position: fixed;
   left: 50%;
-  bottom: max(172px, calc(env(safe-area-inset-bottom) + 172px));
+  top: max(calc(env(safe-area-inset-top) + 62px), 62px);
   transform: translateX(-50%);
   z-index: 40;
   display: flex;
   align-items: center;
   gap: 9px;
   max-width: min(340px, 88vw);
-  padding: 11px 16px;
+  padding: 11px 14px;
   border-radius: 16px;
   background: rgba(255, 244, 214, .96);
   color: #6b4314;
@@ -920,6 +981,24 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   animation: notePopIn .45s cubic-bezier(.2, .8, .2, 1);
 }
 .all-found-note svg { color: #e2934f; flex: none; }
+.all-found-note.clickable { cursor: pointer; }
+.all-found-note.clickable:hover { background: #fff8e2; }
+.all-found-note em { font-style: normal; font-weight: 700; text-decoration: underline; color: #d97a2b; }
+.note-close {
+  margin-left: auto;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(107, 67, 20, .12);
+  color: #6b4314;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.note-close:hover { background: rgba(107, 67, 20, .22); }
 
 .zoom-controls {
   position: fixed;
@@ -931,8 +1010,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   gap: 6px;
 }
 .zoom-controls button {
-  width: 38px;
-  height: 38px;
+  width: 31px;
+  height: 31px;
   border-radius: 50%;
   border: 1px solid rgba(255, 238, 186, .35);
   background: rgba(37, 52, 26, .35);
@@ -950,8 +1029,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   top: max(18px, env(safe-area-inset-top));
   right: max(18px, env(safe-area-inset-right));
   z-index: 40;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid rgba(255, 238, 186, .35);
   background: rgba(37, 52, 26, .35);
@@ -966,7 +1045,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 
 /* ============ Responsive: escritorio ============ */
 @media (min-width: 1024px) {
-  .romance-page { --flower-scale: 1.12; }
+  .romance-page { --flower-scale: 1.2; }
   .field-copy { padding: 13vh 8vw 0; max-width: 620px; }
   .section-text { font-size: 18px; max-width: 460px; }
   .message-bubble { max-width: 280px; }
@@ -974,7 +1053,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 
 /* ============ Responsive: móvil ============ */
 @media (max-width: 640px) {
-  .romance-page { --flower-scale: .92; }
+  .romance-page { --flower-scale: .98; }
   .field-copy { padding: 9vh 7vw 0; }
   .field-copy h2 { font-size: 44px; }
   .section-text { font-size: 15.5px; max-width: 320px; }
@@ -983,14 +1062,15 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   .field-section::before { background-size: auto, 24px 100%; }
   .field-scroll-down { bottom: 26px; }
   .corner-note { left: 18px; bottom: 16px; }
-  .sound-button { width: 44px; height: 44px; }
-  .theme-button { width: 44px; height: 44px; top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); }
-  .garden-counter { bottom: max(148px, calc(env(safe-area-inset-bottom) + 148px)); font-size: 11px; }
-  .zoom-controls { top: max(calc(env(safe-area-inset-top) + 64px), 64px); right: max(14px, env(safe-area-inset-right)); }
-  .zoom-controls button { width: 42px; height: 42px; }
-  .all-found-note { bottom: max(204px, calc(env(safe-area-inset-bottom) + 204px)); font-size: 13px; }
+  .sound-button { width: 36px; height: 36px; }
+  .theme-button { width: 36px; height: 36px; top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); }
+  .garden-counter { top: max(14px, calc(env(safe-area-inset-top) + 14px)); font-size: 11px; }
+  .zoom-controls { top: max(calc(env(safe-area-inset-top) + 66px), 66px); right: max(14px, env(safe-area-inset-right)); }
+  .zoom-controls button { width: 34px; height: 34px; }
+  .all-found-note { top: max(calc(env(safe-area-inset-top) + 60px), 60px); font-size: 13px; }
   .ending-section { padding: 96px 8vw 120px; min-height: 92svh; }
   .ending-text { font-size: 16px; }
+  .letter-card { padding: 40px 20px 36px; border-radius: 16px; }
   .special-overlay { padding: 20px; }
   .special-overlay > p:not(.special-kicker) { font-size: 16px; }
 }

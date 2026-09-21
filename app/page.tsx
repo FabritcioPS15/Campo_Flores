@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { ChevronDown, Heart, Home, Moon, Sun, Volume2, VolumeX, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { ChevronDown, Heart, Home, Lock, Moon, Sun, Volume2, VolumeX, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { GiSunflower } from 'react-icons/gi'
 import { BsStars } from 'react-icons/bs'
 import { IoFlowerOutline } from 'react-icons/io5'
 import Image from 'next/image'
@@ -13,33 +14,33 @@ type MessageState = { text: string; x: number; y: number }
 // Campo ordenado: 25 flores (una por mensaje) + la especial, espaciadas para que ninguna quedé tapada.
 const flowers: Flower[] = [
   // far — primera fila, trasera
-  { x: 4, y: 70, size: 52, depth: 'far', tilt: -6, phrase: 'Si pudiera elegir una flor entre todas, seguiría eligiéndote a ti.' },
-  { x: 17, y: 73, size: 56, depth: 'far', tilt: 5, phrase: 'Eres una de esas casualidades bonitas que uno agradece toda la vida.' },
-  { x: 30, y: 69, size: 54, depth: 'far', tilt: -8, phrase: 'No sé qué hice para encontrarte, pero sí sé que quiero cuidarte.' },
-  { x: 43, y: 72, size: 58, depth: 'far', tilt: 4, phrase: 'Contigo hasta los días normales se sienten especiales.' },
-  { x: 56, y: 70, size: 52, depth: 'far', tilt: -5, phrase: 'Tu sonrisa tiene una manera muy bonita de arreglar mis días.' },
-  { x: 69, y: 73, size: 56, depth: 'far', tilt: 7, phrase: 'Si las flores necesitan sol para crecer, yo necesito un poquito de ti para sonreír.' },
-  { x: 82, y: 69, size: 54, depth: 'far', tilt: -6, phrase: 'Qué bonito coincidir contigo en esta vida.' },
-  { x: 95, y: 72, size: 50, depth: 'far', tilt: 6, phrase: 'No eres solamente mi enamorada, eres también mi lugar favorito.' },
+  { x: 4, y: 63, size: 52, depth: 'far', tilt: -6, phrase: 'Si pudiera elegir una flor entre todas, seguiría eligiéndote a ti.' },
+  { x: 17, y: 66, size: 56, depth: 'far', tilt: 5, phrase: 'Eres una de esas casualidades bonitas que uno agradece toda la vida.' },
+  { x: 30, y: 62, size: 54, depth: 'far', tilt: -8, phrase: 'No sé qué hice para encontrarte, pero sí sé que quiero cuidarte.' },
+  { x: 43, y: 65, size: 58, depth: 'far', tilt: 4, phrase: 'Contigo hasta los días normales se sienten especiales.' },
+  { x: 56, y: 63, size: 52, depth: 'far', tilt: -5, phrase: 'Tu sonrisa tiene una manera muy bonita de arreglar mis días.' },
+  { x: 69, y: 66, size: 56, depth: 'far', tilt: 7, phrase: 'Si las flores necesitan sol para crecer, yo necesito un poquito de ti para sonreír.' },
+  { x: 82, y: 62, size: 54, depth: 'far', tilt: -6, phrase: 'Qué bonito coincidir contigo en esta vida.' },
+  { x: 95, y: 65, size: 50, depth: 'far', tilt: 6, phrase: 'No eres solamente mi enamorada, eres también mi lugar favorito.' },
   // mid — fila central
-  { x: 9, y: 84, size: 58, depth: 'mid', tilt: 4, phrase: 'Me gustas hoy, me gustabas ayer y probablemente me gustarás mucho más mañana.' },
-  { x: 22, y: 83, size: 56, depth: 'mid', tilt: -7, phrase: 'Hay millones de personas en el mundo y qué suerte la mía de encontrarte a ti.' },
-  { x: 35, y: 86, size: 60, depth: 'mid', tilt: 6, phrase: 'Prometo seguir coleccionando momentos contigo.' },
-  { x: 48, y: 83, size: 62, depth: 'mid', tilt: -4, phrase: 'Ojalá pudiera guardar cada abrazo tuyo en un frasquito para los días que te extrañe.' },
-  { x: 61, y: 86, size: 56, depth: 'mid', tilt: 8, phrase: 'Tú haces que mi mundo tenga un poquito más de color.' },
-  { x: 74, y: 83, size: 60, depth: 'mid', tilt: -6, phrase: 'No necesito un campo lleno de flores cuando tengo tu sonrisa.' },
-  { x: 86, y: 86, size: 54, depth: 'mid', tilt: 5, phrase: 'Diana, tu nombre quedó bonito en mi vida.' },
-  { x: 5, y: 87, size: 54, depth: 'mid', tilt: 5, phrase: 'Si llegaste hasta esta flor, recuerda que alguien piensa muchísimo en ti.' },
-  { x: 93, y: 84, size: 52, depth: 'mid', tilt: -7, phrase: 'Esta flor es bonita, pero tú le ganas.' },
+  { x: 9, y: 74, size: 58, depth: 'mid', tilt: 4, phrase: 'Me gustas hoy, me gustabas ayer y probablemente me gustarás mucho más mañana.' },
+  { x: 22, y: 73, size: 56, depth: 'mid', tilt: -7, phrase: 'Hay millones de personas en el mundo y qué suerte la mía de encontrarte a ti.' },
+  { x: 35, y: 76, size: 60, depth: 'mid', tilt: 6, phrase: 'Prometo seguir coleccionando momentos contigo.' },
+  { x: 48, y: 74, size: 62, depth: 'mid', tilt: -4, phrase: 'Ojalá pudiera guardar cada abrazo tuyo en un frasquito para los días que te extrañe.' },
+  { x: 61, y: 76, size: 56, depth: 'mid', tilt: 8, phrase: 'Tú haces que mi mundo tenga un poquito más de color.' },
+  { x: 74, y: 73, size: 60, depth: 'mid', tilt: -6, phrase: 'No necesito un campo lleno de flores cuando tengo tu sonrisa.' },
+  { x: 86, y: 76, size: 54, depth: 'mid', tilt: 5, phrase: 'Diana, tu nombre quedó bonito en mi vida.' },
+  { x: 5, y: 78, size: 54, depth: 'mid', tilt: 5, phrase: 'Si llegaste hasta esta flor, recuerda que alguien piensa muchísimo en ti.' },
+  { x: 93, y: 73, size: 52, depth: 'mid', tilt: -7, phrase: 'Esta flor es bonita, pero tú le ganas.' },
   // near — fáciles de tocar
-  { x: 13, y: 91, size: 46, depth: 'near', tilt: 9, phrase: 'Pequeño recordatorio: eres muy, muy especial para mí.' },
-  { x: 26, y: 93, size: 44, depth: 'near', tilt: -6, phrase: 'Quiero seguir viviendo momentos que algún día recordemos con una sonrisa.' },
-  { x: 39, y: 90, size: 48, depth: 'near', tilt: 5, phrase: 'Gracias por ser tú. No cambiaría eso por nada.' },
-  { x: 58, y: 92, size: 46, depth: 'near', tilt: -8, phrase: 'Mi parte favorita de este campo todavía no aparece… porque eres tú.' },
-  { x: 68, y: 90, size: 48, depth: 'near', tilt: 7, phrase: 'Y si pensabas que ya habías encontrado todas las flores… todavía queda una sorpresa.' },
-  { x: 81, y: 92, size: 44, depth: 'near', tilt: -5, phrase: 'Entre tantas flores, siempre hay una que destaca… y para mí eres tú.' },
-  { x: 95, y: 91, size: 46, depth: 'near', tilt: 4, phrase: 'A veces no encuentro las palabras para decirte cuánto te quiero, así que te dejo una flor.' },
-  { x: 4, y: 93, size: 42, depth: 'near', tilt: 6, phrase: 'Espero que cada vez que veas una flor amarilla te acuerdes un poquito de mí.' },
+  { x: 13, y: 85, size: 46, depth: 'near', tilt: 9, phrase: 'Pequeño recordatorio: eres muy, muy especial para mí.' },
+  { x: 26, y: 88, size: 44, depth: 'near', tilt: -6, phrase: 'Quiero seguir viviendo momentos que algún día recordemos con una sonrisa.' },
+  { x: 39, y: 85, size: 48, depth: 'near', tilt: 5, phrase: 'Gracias por ser tú. No cambiaría eso por nada.' },
+  { x: 58, y: 87, size: 46, depth: 'near', tilt: -8, phrase: 'Mi parte favorita de este campo todavía no aparece… porque eres tú.' },
+  { x: 68, y: 85, size: 48, depth: 'near', tilt: 7, phrase: 'Y si pensabas que ya habías encontrado todas las flores… todavía queda una sorpresa.' },
+  { x: 81, y: 87, size: 44, depth: 'near', tilt: -5, phrase: 'Entre tantas flores, siempre hay una que destaca… y para mí eres tú.' },
+  { x: 95, y: 85, size: 46, depth: 'near', tilt: 4, phrase: 'A veces no encuentro las palabras para decirte cuánto te quiero, así que te dejo una flor.' },
+  { x: 4, y: 88, size: 42, depth: 'near', tilt: 6, phrase: 'Espero que cada vez que veas una flor amarilla te acuerdes un poquito de mí.' },
   // la flor especial, oculta entre las del centro
   { x: 48, y: 96, size: 60, depth: 'near', tilt: -12, special: true, phrase: 'Te quiero muchísimo, Diana.' },
 ]
@@ -79,6 +80,9 @@ const midpoint = (a: { x: number; y: number }, b: { x: number; y: number }) => (
 
 const COLLECTIBLE = flowers.filter((flower) => !flower.special).length
 
+const LETTER_TEXT =
+  'Este campo no tiene prisa ni final, como nosotros. Vuelve cuando quieras, Diana: las flores y yo te esperamos aquí, siempre.'
+
 export default function Page() {
   const [phase, setPhase] = useState<'intro' | 'leaving' | 'entered'>('intro')
   const [message, setMessage] = useState<MessageState | null>(null)
@@ -90,17 +94,22 @@ export default function Page() {
   // --- Paseo por el campo: cámara (desplazar + zoom), recolección, noche y mariposa ---
   const [collected, setCollected] = useState<ReadonlySet<number>>(new Set())
   const [night, setNight] = useState(false)
+  const [noteDismissed, setNoteDismissed] = useState(false)
   const [cam, setCam] = useState({ x: 0, y: 0, k: FULL })
   const [dragging, setDragging] = useState(false)
   const [lit, setLit] = useState<ReadonlySet<number>>(new Set())
+  const [typed, setTyped] = useState('')
+  const [doneTyping, setDoneTyping] = useState(false)
   const [bfVisible, setBfVisible] = useState(false)
 
   const camRef = useRef(cam)
   const viewRef = useRef({ w: 0, h: 0 })
   const sectionRef = useRef<HTMLElement | null>(null)
+  const endingRef = useRef<HTMLElement | null>(null)
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const bfRef = useRef<HTMLDivElement | null>(null)
   const suppressClickRef = useRef(false)
+  const inertiaRef = useRef(0)
   const gestureRef = useRef({
     ids: new Map<number, { x: number; y: number }>(),
     mode: 'none' as 'none' | 'pan' | 'pinch',
@@ -109,6 +118,9 @@ export default function Page() {
     startMid: { x: 0, y: 0 },
     startDist: 0,
     moved: false,
+    momentum: false,
+    vel: { x: 0, y: 0 },
+    prevPt: { x: 0, y: 0, t: 0 },
   })
 
   const entered = phase !== 'intro'
@@ -164,9 +176,13 @@ export default function Page() {
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
+    cancelAnimationFrame(inertiaRef.current)
     suppressClickRef.current = false
     e.currentTarget.setPointerCapture?.(e.pointerId)
     const g = gestureRef.current
+    g.momentum = false
+    g.vel = { x: 0, y: 0 }
+    g.prevPt = { x: e.clientX, y: e.clientY, t: performance.now() }
     g.ids.set(e.pointerId, { x: e.clientX, y: e.clientY })
     if (g.ids.size === 2) {
       const pts = [...g.ids.values()]
@@ -203,8 +219,18 @@ export default function Page() {
     } else if (g.mode === 'pan' && g.ids.size === 1) {
       const dx = e.clientX - g.startPoint.x
       const dy = e.clientY - g.startPoint.y
+      const now = performance.now()
+      const dt = now - g.prevPt.t
+      if (dt > 0) {
+        const ivx = (e.clientX - g.prevPt.x) / dt
+        const ivy = (e.clientY - g.prevPt.y) / dt
+        g.vel.x = g.vel.x * 0.82 + ivx * 0.18
+        g.vel.y = g.vel.y * 0.82 + ivy * 0.18
+      }
+      g.prevPt = { x: e.clientX, y: e.clientY, t: now }
       if (Math.abs(dx) + Math.abs(dy) > 6) {
         g.moved = true
+        g.momentum = true
         suppressClickRef.current = true
       }
       applyCam({ x: g.startCam.x + dx, y: g.startCam.y + dy, k: g.startCam.k })
@@ -221,8 +247,29 @@ export default function Page() {
       g.startPoint = pts[0]
     }
     if (g.ids.size === 0) {
+      const hadMomentum = g.momentum && g.mode === 'pan'
       g.mode = 'none'
+      g.momentum = false
       setDragging(false)
+      if (hadMomentum && Math.hypot(g.vel.x, g.vel.y) > 0.4) {
+        const max = 3
+        const len = Math.hypot(g.vel.x, g.vel.y)
+        if (len > max) {
+          g.vel.x = (g.vel.x / len) * max
+          g.vel.y = (g.vel.y / len) * max
+        }
+        const tick = () => {
+          const c = camRef.current
+          const vx = g.vel.x * 16
+          const vy = g.vel.y * 16
+          g.vel.x *= 0.9
+          g.vel.y *= 0.9
+          if (Math.hypot(vx, vy) < 0.4) return
+          applyCam({ x: c.x + vx, y: c.y + vy, k: c.k })
+          inertiaRef.current = requestAnimationFrame(tick)
+        }
+        inertiaRef.current = requestAnimationFrame(tick)
+      }
     }
   }
 
@@ -345,6 +392,67 @@ export default function Page() {
   const handleHeroEnd = (event: React.AnimationEvent<HTMLElement>) => {
     if (event.animationName === 'heroExit') setPhase('entered')
   }
+
+  // Al entrar al campo se fija la página (sin scroll) para que el arrastre y el zoom funcionen bien, sobre todo en móvil.
+  useEffect(() => {
+    if (!entered) return
+    window.scrollTo(0, 0)
+    const html = document.documentElement
+    const body = document.body
+    const prevHtml = html.style.overflow
+    const prevBody = body.style.overflow
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    return () => {
+      html.style.overflow = prevHtml
+      body.style.overflow = prevBody
+    }
+  }, [entered])
+
+  const goToEnding = () => {
+    const html = document.documentElement
+    const body = document.body
+    html.style.overflow = ''
+    body.style.overflow = ''
+    document.getElementById('ending')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // La carta se escribe sola cuando se revela en pantalla.
+  useEffect(() => {
+    if (!allFound) return
+    const el = endingRef.current
+    if (!el) return
+    let disposed = false
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return
+        io.disconnect()
+        if (disposed) return
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+          setTyped(LETTER_TEXT)
+          setDoneTyping(true)
+          return
+        }
+        setTyped('')
+        setDoneTyping(false)
+        let i = 0
+        const t = window.setInterval(() => {
+          i++
+          setTyped(LETTER_TEXT.slice(0, i))
+          if (i >= LETTER_TEXT.length) {
+            window.clearInterval(t)
+            setDoneTyping(true)
+          }
+        }, 22)
+      },
+      { threshold: 0.4 }
+    )
+    io.observe(el)
+    return () => {
+      disposed = true
+      io.disconnect()
+    }
+  }, [allFound])
 
   const touchFlower = (flower: Flower, index: number) => {
     if (suppressClickRef.current) {
@@ -523,6 +631,7 @@ export default function Page() {
                     <Heart size={12} fill="currentColor" />
                   </span>
                 )}
+                <span className="ground" aria-hidden="true" />
               </button>
             ))}
             {message && (
@@ -541,20 +650,14 @@ export default function Page() {
         </div>
 
         <span className="butterfly butterfly-a" aria-hidden="true">
-          <i className="wing wing-l" />
-          <i className="body" />
-          <i className="wing wing-r" />
+          <img src="/mariposa.png" alt="" draggable="false" />
         </span>
         <span className="butterfly butterfly-b" aria-hidden="true">
-          <i className="wing wing-l" />
-          <i className="body" />
-          <i className="wing wing-r" />
+          <img src="/mariposa.png" alt="" draggable="false" />
         </span>
         <div className={`follow-holder ${bfVisible ? 'visible' : ''}`} aria-hidden="true">
           <div className="butterfly follow-butterfly" ref={bfRef}>
-            <i className="wing wing-l" />
-            <i className="body" />
-            <i className="wing wing-r" />
+            <img src="/mariposa.png" alt="" draggable="false" />
           </div>
         </div>
 
@@ -564,41 +667,74 @@ export default function Page() {
           ))}
         </div>
         {allFound && (
-          <button className="field-scroll-down" onClick={() => document.getElementById('ending')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Bajar a la carta final">
+          <button className="field-scroll-down" onClick={goToEnding} aria-label="Bajar a la carta final">
             <ChevronDown size={16} />
           </button>
         )}
       </section>
 
-      <section id="ending" className="ending-section" aria-label="Un mensaje para el final">
+      <section id="ending" ref={endingRef} className={`ending-section ${allFound ? 'unlocked' : 'locked'}`} aria-label="Un mensaje para el final">
         <div className="ending-glow" aria-hidden="true" />
-        <BsStars size={15} className="end-spark" />
-        <p className="ending-eyebrow">una carta para ti, Diana</p>
-        <h2 className="ending-title">
-          Y al final,
-          <br />
-          <em>siempre tú.</em>
-        </h2>
-        <p className="ending-text">
-          Este campo no tiene prisa ni final, como nosotros. Vuelve cuando quieras, Diana: las flores y yo te esperamos
-          aquí, siempre.
-        </p>
-        <div className="heart-divider" aria-hidden="true">
-          <Heart size={16} fill="currentColor" />
+        {!allFound && (
+          <div className="ending-lock" aria-hidden="true">
+            <Lock size={16} />
+            <span>Sigue recogiendo flores, la carta de Diana aguarda aquí.</span>
+          </div>
+        )}
+        <div className="ending-inner">
+          <div className="letter-card">
+            <BsStars size={15} className="end-spark" />
+            <p className="ending-eyebrow">una carta para ti, Diana</p>
+            <h2 className="ending-title">
+              Y al final,
+              <br />
+              <em>siempre tú.</em>
+            </h2>
+            <p className="ending-text">
+              <span>{typed}</span>
+              {allFound && !doneTyping && <span className="type-caret" aria-hidden="true" />}
+            </p>
+            <div className="heart-divider" aria-hidden="true">
+              <Heart size={16} fill="currentColor" />
+            </div>
+            <p className="ending-credit">hecho con amor, para ti</p>
+          </div>
         </div>
-        <p className="ending-credit">hecho con amor, para ti</p>
       </section>
 
       <div className="garden-counter" role="status" aria-live="polite">
-        <IoFlowerOutline size={14} />
+        <GiSunflower size={16} />
         <span className="counter-num">{collectedCount}</span>
         <span className="counter-total">de {COLLECTIBLE}</span>
       </div>
 
-      {allFound && (
-        <div className="all-found-note" role="status">
+      {allFound && !noteDismissed && (
+        <div
+          className="all-found-note clickable"
+          role="button"
+          tabIndex={0}
+          onClick={goToEnding}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              goToEnding()
+            }
+          }}
+        >
           <Heart size={13} fill="currentColor" />
-          <span>Encontraste todas las flores, Diana. Queda una última sorpresa por descubrir.</span>
+          <span>
+            Encontraste todas las flores, Diana. Da click <em>aquí</em> para ir a tu sorpresa.
+          </span>
+          <button
+            className="note-close"
+            onClick={(e) => {
+              e.stopPropagation()
+              setNoteDismissed(true)
+            }}
+            aria-label="Cerrar aviso"
+          >
+            <X size={12} />
+          </button>
         </div>
       )}
 
