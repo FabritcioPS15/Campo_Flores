@@ -923,12 +923,12 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
 
 .zoom-controls {
   position: fixed;
-  top: max(calc(env(safe-area-inset-top) + 72px), 72px);
+  top: max(calc(env(safe-area-inset-top) + 62px), 62px);
   right: max(18px, env(safe-area-inset-right));
   z-index: 40;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 .zoom-controls button {
   width: 38px;
@@ -986,7 +986,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; touch-action: 
   .sound-button { width: 44px; height: 44px; }
   .theme-button { width: 44px; height: 44px; top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); }
   .garden-counter { bottom: max(148px, calc(env(safe-area-inset-bottom) + 148px)); font-size: 11px; }
-  .zoom-controls { top: max(calc(env(safe-area-inset-top) + 74px), 74px); right: max(14px, env(safe-area-inset-right)); }
+  .zoom-controls { top: max(calc(env(safe-area-inset-top) + 64px), 64px); right: max(14px, env(safe-area-inset-right)); }
   .zoom-controls button { width: 42px; height: 42px; }
   .all-found-note { bottom: max(204px, calc(env(safe-area-inset-bottom) + 204px)); font-size: 13px; }
   .ending-section { padding: 96px 8vw 120px; min-height: 92svh; }
