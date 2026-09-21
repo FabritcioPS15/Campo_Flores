@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
-import { ChevronDown, Heart, Home, Moon, Sun, Volume2, VolumeX, Wind, X, ZoomIn, ZoomOut } from 'lucide-react'
+import { ChevronDown, Heart, Home, Moon, Sun, Volume2, VolumeX, X, ZoomIn, ZoomOut } from 'lucide-react'
 import { BsStars } from 'react-icons/bs'
 import { IoFlowerOutline } from 'react-icons/io5'
 import Image from 'next/image'
@@ -69,7 +69,9 @@ const fireflies = Array.from({ length: 16 }, (_, i) => ({
   '--drift': `${(i % 5) - 2}vw`,
 }))
 
-const ZOOM_MIN = 1
+const FIELD_SCALE = 1.18
+const FULL = 1 / FIELD_SCALE
+const ZOOM_MIN = FULL
 const ZOOM_MAX = 3
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max)
 const distance = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y)
@@ -83,12 +85,12 @@ export default function Page() {
   const [specialOpen, setSpecialOpen] = useState(false)
   const [muted, setMuted] = useState(true)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const audioRef = useRef<{ ctx: AudioContext; master: GainNode } | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // --- Paseo por el campo: cámara (desplazar + zoom), recolección, noche y mariposa ---
   const [collected, setCollected] = useState<ReadonlySet<number>>(new Set())
   const [night, setNight] = useState(false)
-  const [cam, setCam] = useState({ x: 0, y: 0, k: 1 })
+  const [cam, setCam] = useState({ x: 0, y: 0, k: FULL })
   const [dragging, setDragging] = useState(false)
   const [lit, setLit] = useState<ReadonlySet<number>>(new Set())
   const [bfVisible, setBfVisible] = useState(false)
@@ -115,8 +117,8 @@ export default function Page() {
   const applyCam = useCallback((next: { x: number; y: number; k: number }) => {
     const v = viewRef.current
     const k = clamp(next.k, ZOOM_MIN, ZOOM_MAX)
-    const mx = (v.w * (k - 1)) / 2 + v.w * 0.04
-    const my = (v.h * (k - 1)) / 2 + v.h * 0.02
+    const mx = Math.max(0, (v.w * FIELD_SCALE * k - v.w) / 2)
+    const my = Math.max(0, (v.h * FIELD_SCALE * k - v.h) / 2)
     const c = { x: clamp(next.x, -mx, mx), y: clamp(next.y, -my, my), k }
     camRef.current = c
     setCam(c)
@@ -134,18 +136,17 @@ export default function Page() {
   }, [entered, night])
 
   const zoomAt = (factor: number, px: number, py: number) => {
-    const v = viewRef.current
     const cur = camRef.current
     const k = clamp(cur.k * factor, ZOOM_MIN, ZOOM_MAX)
-    const worldX = (px - v.w / 2 - cur.x) / cur.k + v.w / 2
-    const worldY = (py - v.h / 2 - cur.y) / cur.k + v.h / 2
-    applyCam({ x: px - v.w / 2 - (worldX - v.w / 2) * k, y: py - v.h / 2 - (worldY - v.h / 2) * k, k })
+    const worldX = (px - cur.x) / cur.k
+    const worldY = (py - cur.y) / cur.k
+    applyCam({ x: px - worldX * k, y: py - worldY * k, k })
   }
   const zoomBy = (step: number) => {
     const v = viewRef.current
     zoomAt(1 + step, v.w / 2, v.h / 2)
   }
-  const resetView = () => applyCam({ x: 0, y: 0, k: 1 })
+  const resetView = () => applyCam({ x: 0, y: 0, k: FULL })
 
   useEffect(() => {
     const el = viewportRef.current
@@ -191,12 +192,11 @@ export default function Page() {
       const d = distance(pts[0], pts[1])
       const md = midpoint(pts[0], pts[1])
       const k = clamp(g.startCam.k * (d / g.startDist), ZOOM_MIN, ZOOM_MAX)
-      const v = viewRef.current
-      const worldX = (g.startMid.x - v.w / 2 - g.startCam.x) / g.startCam.k + v.w / 2
-      const worldY = (g.startMid.y - v.h / 2 - g.startCam.y) / g.startCam.k + v.h / 2
+      const worldX = (g.startMid.x - g.startCam.x) / g.startCam.k
+      const worldY = (g.startMid.y - g.startCam.y) / g.startCam.k
       applyCam({
-        x: md.x - v.w / 2 - (worldX - v.w / 2) * k,
-        y: md.y - v.h / 2 - (worldY - v.h / 2) * k,
+        x: md.x - worldX * k,
+        y: md.y - worldY * k,
         k,
       })
       g.moved = true
@@ -259,8 +259,8 @@ export default function Page() {
       const c = camRef.current
       const near = new Set<number>()
       flowers.forEach((f, i) => {
-        const sx = ((f.x / 100) * v.w - v.w / 2) * c.k + v.w / 2 + c.x
-        const sy = ((f.y / 100) * v.h - v.h / 2) * c.k + v.h / 2 + c.y
+        const sx = (f.x / 100) * v.w * FIELD_SCALE * c.k + c.x
+        const sy = (f.y / 100) * v.h * FIELD_SCALE * c.k + c.y
         if (Math.hypot(sx - cur.x, sy - cur.y) < 66) near.add(i)
       })
       setLit((prev) => {
@@ -301,16 +301,33 @@ export default function Page() {
     setOffset({ x: (gamma / 45) * 11, y: ((beta - 45) / 45) * 7 })
   }, [])
 
+  useEffect(() => {
+    const audio = new Audio('/cancion.mp3')
+    audio.loop = true
+    audio.volume = 0.6
+    audioRef.current = audio
+
+    return () => {
+      audio.pause()
+      audioRef.current = null
+    }
+  }, [])
+
   useEffect(
     () => () => {
       window.removeEventListener('deviceorientation', onOrient)
-      audioRef.current?.ctx.close().catch(() => undefined)
+      audioRef.current?.pause()
     },
     [onOrient],
   )
 
   const enterField = () => {
     setPhase('leaving')
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        setMuted(false)
+      }).catch(() => undefined)
+    }
     if (typeof DeviceOrientationEvent !== 'undefined') {
       if ('requestPermission' in DeviceOrientationEvent) {
         ; (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> })
@@ -350,71 +367,16 @@ export default function Page() {
     return () => clearTimeout(timer)
   }, [message])
 
-  // Ambiente sonoro: viento suave sintetizado con Web Audio (sin archivos externos).
-  const buildAmbient = (): { ctx: AudioContext; master: GainNode } | null => {
-    try {
-      const Ctor =
-        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      if (!Ctor) return null
-      const ctx = new Ctor()
-      const master = ctx.createGain()
-      master.gain.value = 0
-      const comp = ctx.createDynamicsCompressor()
-      comp.threshold.value = -18
-      master.connect(comp)
-      comp.connect(ctx.destination)
-
-      const len = ctx.sampleRate * 2
-      const buf = ctx.createBuffer(1, len, ctx.sampleRate)
-      const data = buf.getChannelData(0)
-      let last = 0
-      for (let i = 0; i < len; i++) {
-        const white = Math.random() * 2 - 1
-        last = (last + 0.02 * white) / 1.02
-        data[i] = last * 3.5
-      }
-      const noise = ctx.createBufferSource()
-      noise.buffer = buf
-      noise.loop = true
-      const lp = ctx.createBiquadFilter()
-      lp.type = 'lowpass'
-      lp.frequency.value = 340
-      lp.Q.value = 0.7
-      const lfo = ctx.createOscillator()
-      lfo.frequency.value = 0.07
-      const lfoAmt = ctx.createGain()
-      lfoAmt.gain.value = 180
-      lfo.connect(lfoAmt)
-      lfoAmt.connect(lp.frequency)
-      noise.connect(lp)
-      lp.connect(master)
-      noise.start()
-      lfo.start()
-
-      window.addEventListener('pointerdown', () => void ctx.resume(), { once: true })
-      return { ctx, master }
-    } catch {
-      return null
-    }
-  }
-
   const toggleSound = () => {
+    const audio = audioRef.current
+    if (!audio) return
     if (muted) {
-      setMuted(false)
-      if (!audioRef.current) audioRef.current = buildAmbient()
-      const { ctx, master } = audioRef.current ?? {}
-      if (ctx && master) {
-        void ctx.resume()
-        master.gain.cancelScheduledValues(ctx.currentTime)
-        master.gain.setTargetAtTime(0.55, ctx.currentTime, 0.6)
-      }
+      audio.play().then(() => {
+        setMuted(false)
+      }).catch(() => undefined)
     } else {
+      audio.pause()
       setMuted(true)
-      const audio = audioRef.current
-      if (audio) {
-        audio.master.gain.cancelScheduledValues(audio.ctx.currentTime)
-        audio.master.gain.setTargetAtTime(0, audio.ctx.currentTime, 0.12)
-      }
     }
   }
 
@@ -601,13 +563,11 @@ export default function Page() {
             <i key={i} style={petal as CSSProperties} />
           ))}
         </div>
-
-        <div className="field-footer">
-          <Wind size={16} /> deja que el viento haga lo suyo <span>•</span> y vuelve cuando quieras
-        </div>
-        <button className="field-scroll-down" onClick={() => document.getElementById('ending')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Bajar a la carta final">
-          <ChevronDown size={16} />
-        </button>
+        {allFound && (
+          <button className="field-scroll-down" onClick={() => document.getElementById('ending')?.scrollIntoView({ behavior: 'smooth' })} aria-label="Bajar a la carta final">
+            <ChevronDown size={16} />
+          </button>
+        )}
       </section>
 
       <section id="ending" className="ending-section" aria-label="Un mensaje para el final">
